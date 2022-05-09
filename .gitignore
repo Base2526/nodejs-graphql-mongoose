@@ -1,2 +1,5 @@
 api/node_modules
 backend/node_modules
+
+api-graphql/node_modules
+react-admin/node_modules

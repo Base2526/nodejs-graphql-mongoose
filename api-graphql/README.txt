@@ -22,7 +22,6 @@ mutation{
   }
 }
 
-
 query Rom{
   room(_id:"626653c464e68000c62e6a32"){
     name
@@ -32,7 +31,6 @@ query Rom{
 
 # Write your query or mutation here
 mutation{
-
   deleteRoom(_id:"626653c464e68000c62e6a32"){
     name
     price
@@ -40,10 +38,20 @@ mutation{
 }
 
 Get all room
-query Roms{
+query Rooms{
   rooms{
     name
     price
   }
 }
 
+# custom result array
+query Rooms{
+  rooms{
+		status
+    data{
+      name
+      summary
+    }
+  }
+}

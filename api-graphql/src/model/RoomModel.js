@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema
 
 const roomSchema = new Schema({
-  name: { type: String },
+  name: { type: String, index:true, unique:true,sparse:true },
   summary: { type: String },
   description: { type: String },
   room_type: { type: String },
@@ -13,9 +13,10 @@ const roomSchema = new Schema({
   accommodates: { type: Number },
   price: { type: Number },
   cleaning_fee: { type: Number }
+},
+{
+    timestamps: true
 })
 
-const Room = mongoose.model('rooms', roomSchema,'rooms')
-
+const Room = mongoose.model('room', roomSchema,'room')
 export default Room
-

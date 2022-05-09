@@ -1,5 +1,5 @@
 {
-    "name": "demo",
+    "name": "react-backend",
     "version": "4.0.0",
     "private": true,
     "dependencies": {
@@ -39,7 +39,7 @@
     },
     "scripts": {
         "analyze": "source-map-explorer 'build/static/js/*.js'",
-        "start": "GENERATE_SOURCEMAP=false react-scripts start",
+        "start": "react-scripts start",
         "build": "yarn node ./build.js",
         "eject": "react-scripts test"
     },
