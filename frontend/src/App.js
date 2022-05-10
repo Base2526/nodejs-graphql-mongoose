@@ -15,13 +15,23 @@ import './App.css';
 
 const { io } = require("socket.io-client");
 
+let socket = undefined;
+
 const App =(params)=> {
   // const query = useQuery()
   const { loading, error, data } = useQuery(EXCHANGE_RATES);
   useEffect(()=>{
-    const socket = io("http://localhost:4040" , { transports : ['websocket'] });
-    socket.connect();
-    // console.log("socket :", socket)
+    socket = io("http://localhost:4040" , 
+                    { transports : ['websocket'], query: {  x: 42} }
+                    );
+
+    if (socket.connected === false && socket.connecting === false) {
+      // use a connect() or reconnect() here if you want
+      socket.connect();
+
+      console.log("socket")
+    }
+    
     // query(User)
   }, [])
 

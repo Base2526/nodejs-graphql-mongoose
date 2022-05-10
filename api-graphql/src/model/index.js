@@ -10,7 +10,7 @@ module.exports =  {
     Bank:BankModel,
     Post:PostModel,
     Role:RoleModel,
-    Socket:SocketModel,
+    SocketModel,
     User:UserModel,
     Comment:CommentModel,
     Mail:MailModel

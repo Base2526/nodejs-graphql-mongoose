@@ -2,12 +2,13 @@ const mongoose = require("mongoose");
 
 const SocketModel = new mongoose.Schema(
   {
-    t: String,
+    // t: String,
     socketId: String,
-    sessionId: String,
-    auth: String,
-    device_detect: String,
-    geolocation: String,
+    userId: String,
+    // sessionId: String,
+    // auth: String,
+    // device_detect: String,
+    // geolocation: String,
   },
   {
     timestamps: true,

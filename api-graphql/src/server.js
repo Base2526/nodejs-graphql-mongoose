@@ -16,7 +16,7 @@ import connection from './mongo'
 import typeDefs from "./typeDefs";
 import resolvers from "./resolvers";
 
-import {Bank, Post, Role, User, Comment, Mail} from './model'
+import {Bank, Post, Role, User, Comment, Mail, SocketModel} from './model'
 
 let PORT = /*process.env.PORT || */ 4040;
 
@@ -85,8 +85,26 @@ async function startApolloServer(typeDefs, resolvers) {
   await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
   console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
 
-  io.on('connection', (socket) => {
-    console.log('A client connected', socket)
+  io.on('connection', async(socket) => {
+
+    // global.socket = socket
+    let handshake = socket.handshake;
+
+    let query = handshake.query;
+
+    console.log('A client connected', socket.id, query.x)
+
+    await SocketModel.findOneAndUpdate({socketId: socket.id}, {updatedAt: Date.now() }, {
+      new: true,
+      upsert: true,
+    });
+
+    socket.on("disconnect", async () => {
+      console.log("A client disconnect", socket.id)
+
+      await SocketModel.remove({socketId: socket.id })
+    })
+
   });
 }
 
