@@ -4,6 +4,7 @@ import RoleModel from './RoleModel'
 import SocketModel from './SocketModel'
 import UserModel from './UserModel'
 import CommentModel from './CommentModel'
+import MailModel from './MailModel'
 
 module.exports =  {
     Bank:BankModel,
@@ -11,7 +12,8 @@ module.exports =  {
     Role:RoleModel,
     Socket:SocketModel,
     User:UserModel,
-    Comment:CommentModel
+    Comment:CommentModel,
+    Mail:MailModel
 };
 
 /*

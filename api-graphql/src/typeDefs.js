@@ -4,7 +4,6 @@ export default gql`
   scalar DATETIME
   scalar Long
   
-  
   type Room {
     _id: ID
     name: String
@@ -25,6 +24,7 @@ export default gql`
     password: String
     email: String
     displayName: String!
+    isActive: String
     roles: [String]!
     image: [File]
     lastAccess: DATETIME
@@ -35,6 +35,7 @@ export default gql`
     password: String!
     email: String!
     displayName: String!
+    isActive: String!
     roles: [String]!
     image: [FileInput]
   }
@@ -94,11 +95,6 @@ export default gql`
     files: [File]
     isPublish: Int
     owner_id: ID
-    # user_id: ID!
-    # user: User
-    # comments: [Comment]
-    # files:[File]
-    # createdAt : DATETIME
     createdAt : DATETIME
     updatedAt: DATETIME
   }
@@ -111,6 +107,13 @@ export default gql`
   }
 
   type Bank {
+    _id: ID!
+    name: String!
+    description: String
+    isPublish: Int
+  }
+
+  type Mail {
     _id: ID!
     name: String!
     description: String
@@ -161,6 +164,18 @@ export default gql`
     data:[Bank]
   }
 
+  type MailPayLoad {
+    status:Boolean
+    executionTime:String
+    data:Mail
+  }
+
+  type MailsPayLoad {
+    status:Boolean
+    executionTime:String
+    data:[Mail]
+  }
+
   type CommentPayLoad{
     status:Boolean
     executionTime:String
@@ -192,6 +207,10 @@ export default gql`
     Bank(_id: ID!): BankPayLoad
     Banks(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): BanksPayLoad
     getManyBanks(_ids: [ID!]!): BanksPayLoad
+
+    Mail(_id: ID!): MailPayLoad
+    Mails(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): MailsPayLoad
+    getManyMails(_ids: [ID!]!): MailsPayLoad
 
 
     Post(_id: ID!): PostPayLoad
@@ -247,6 +266,12 @@ export default gql`
     isPublish: Int
   }
 
+  input MailInput {
+    name: String!
+    description: String
+    isPublish: Int
+  }
+
   input FileInput {
     base64: String
     fileName: String
@@ -286,6 +311,11 @@ export default gql`
     updateBank(_id: ID!, input: BankInput): Bank
     deleteBank(_id: ID!): Bank
     deleteBanks(_ids: [ID!]!): deleteType
+
+    createMail(input: MailInput): Mail
+    updateMail(_id: ID!, input: MailInput): Mail
+    deleteMail(_id: ID!): Mail
+    deleteMails(_ids: [ID!]!): deleteType
 
     createComment(input: CommentInput): Comment
     updateComment(_id: ID!, input: CommentInput): Comment

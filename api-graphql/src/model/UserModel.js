@@ -8,11 +8,13 @@ const userSchema = new Schema({
   email: { type: String },
   displayName: { type: String },
   roles: [{ type: String }],
+  isActive: { type: String },
   image :[{
     base64: { type: String },
     fileName: { type: String },
     size: { type: Number },
     type: { type: String },
+    
     lastModified: { type: Date },
   }],
   lastAccess : { type : Date, default: Date.now }

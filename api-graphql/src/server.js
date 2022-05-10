@@ -1,4 +1,13 @@
-import { ApolloServer } from "apollo-server";
+// import { ApolloServer } from "apollo-server";
+
+import { ApolloServer } from 'apollo-server-express';
+import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import express from 'express';
+import http from 'http';
+import cors from 'cors'
+
+import socketIO from 'socket.io'
+
 // import mongoose from "mongoose";
 import { elastic } from "./elastic"
 import connection from './mongo' 
@@ -7,7 +16,7 @@ import connection from './mongo'
 import typeDefs from "./typeDefs";
 import resolvers from "./resolvers";
 
-import PostModel from "./model/PostModel"
+import {Bank, Post, Role, User, Comment, Mail} from './model'
 
 let PORT = /*process.env.PORT || */ 4040;
 
@@ -33,6 +42,7 @@ let PORT = /*process.env.PORT || */ 4040;
 //   console.log("mongoose : Connected successfully to database!", PORT);
 // });
 
+/*
 // TODO: create Apollo Server
 const server = new ApolloServer({ typeDefs, resolvers });
 
@@ -55,3 +65,29 @@ server.listen(PORT).then( async({ url }) => {
     console.log("PostModel : change")
   });
 });
+*/
+
+async function startApolloServer(typeDefs, resolvers) {
+  const app = express();
+  const httpServer = http.createServer(app);
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+  });
+  await server.start();
+
+  let io = socketIO(httpServer)
+
+  app.use(cors())
+
+  server.applyMiddleware({ app });
+  await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
+  console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+
+  io.on('connection', (socket) => {
+    console.log('A client connected', socket)
+  });
+}
+
+startApolloServer(typeDefs, resolvers) 

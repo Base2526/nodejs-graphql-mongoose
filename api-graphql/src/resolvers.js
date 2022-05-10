@@ -1,4 +1,4 @@
-import {Bank, Post, Role, Room, User, Comment} from './model'
+import {Bank, Post, Role, User, Comment, Mail} from './model'
 import {emailValidate} from './utils'
 
 const _ = require("lodash");
@@ -74,34 +74,34 @@ export default {
     // Login & Logout
 
     // room
-    async room(root, {
-      _id
-    }) {
-      console.log("room")
+    // async room(root, {
+    //   _id
+    // }) {
+    //   console.log("room")
 
-      let data = await Room.findById(_id)
+    //   let data = await Room.findById(_id)
 
-      return {
-        status:true,
-        data
-      }
-    },
-    async rooms() {
-      console.log("rooms")
+    //   return {
+    //     status:true,
+    //     data
+    //   }
+    // },
+    // async rooms() {
+    //   console.log("rooms")
 
-      let data = await Room.find()
-      return {
-        status:true,
-        data
-      }
-    },
+    //   let data = await Room.find()
+    //   return {
+    //     status:true,
+    //     data
+    //   }
+    // },
     // room
     // user
     async User(root, {
       _id
     }) {
-      let room = await Room.find()
-      console.log("user :", room)
+      // let room = await Room.find()
+      // console.log("user :", room)
 
       let data = await User.findById(_id);
       return {
@@ -370,6 +370,70 @@ export default {
     },
     // Bank
 
+    // Mail
+    async Mail(root, {
+      _id
+    }) {
+
+      let data = await Mail.findById(_id);
+      return {
+        status:true,
+        data
+      }
+    },
+    async Mails(root, {
+      page,
+      perPage, 
+      sortField,
+      sortOrder, 
+      filter
+    }) {
+
+      let start = Date.now()
+
+      console.log("allPosts: page : ", page,
+                  ", perPage : ", perPage, 
+                  ", sortField : ", sortField,
+                  ", sortOrder : ", sortOrder, 
+                  ", filter : ", JSON.parse(JSON.stringify(filter)),
+                  `Time to execute = ${
+                    (Date.now() - start) / 1000
+                  } seconds` )
+
+      let data = await Mail.find();
+
+      return {
+        status:true,
+        data,
+        executionTime: `Time to execute = ${
+          (Date.now() - start) / 1000
+        } seconds`
+      }
+    },
+
+    async getManyMails(root, {
+      _ids
+    }) {
+      console.log("getManyMails :", _ids)
+
+      let start = Date.now()
+
+
+      let data =  await Mail.find({_id: {
+        $in: _ids,
+      }})
+
+      return {
+        status:true,
+        data,
+        executionTime: `Time to execute = ${
+          (Date.now() - start) / 1000
+        } seconds`
+      }
+    },
+
+    // Mail
+
     // Comment 
     async Comment(root, {
       _id
@@ -415,29 +479,29 @@ export default {
   },
   Mutation: {
     // room
-    async createRoom(root, {
-      input
-    }) {
-      console.log("createRoom :", input)
-      return await Room.create(input);
-    },
-    async updateRoom(root, {
-      _id,
-      input
-    }) {
-      console.log("updateRoom :", _id, input)
-      return await Room.findOneAndUpdate({
-        _id
-      }, input, {
-        new: true
-      })
-    },
-    async deleteRoom(root, {
-      _id
-    }) {
-      console.log("deleteRoom :", _id)
-      return await Room.findByIdAndRemove(_id)
-    },
+    // async createRoom(root, {
+    //   input
+    // }) {
+    //   console.log("createRoom :", input)
+    //   return await Room.create(input);
+    // },
+    // async updateRoom(root, {
+    //   _id,
+    //   input
+    // }) {
+    //   console.log("updateRoom :", _id, input)
+    //   return await Room.findOneAndUpdate({
+    //     _id
+    //   }, input, {
+    //     new: true
+    //   })
+    // },
+    // async deleteRoom(root, {
+    //   _id
+    // }) {
+    //   console.log("deleteRoom :", _id)
+    //   return await Room.findByIdAndRemove(_id)
+    // },
     // room
 
     // user
@@ -586,6 +650,47 @@ export default {
       return deleteMany;
     },
     // bank
+
+    // mail
+    async createMail(root, {
+      input
+    }) {
+      console.log("createMail :",JSON.parse(JSON.stringify(input)))
+
+      return await Mail.create(JSON.parse(JSON.stringify(input)));
+    },
+    async updateMail(root, {
+      _id,
+      input
+    }) {
+      console.log("updateMail :", _id, JSON.parse(JSON.stringify(input)))
+      
+      return await Mail.findOneAndUpdate({
+        _id
+      }, input, {
+        new: true
+      })
+    },
+    async deleteMail(root, {
+      _id
+    }) {
+      console.log("deleteMail :", _id)
+
+      return await Mail.findByIdAndRemove({_id})
+    },
+    async deleteMails(root, {
+      _ids
+    }) {
+      console.log("deleteMails :", _ids)
+
+      let deleteMany =  await Mail.deleteMany({_id: {
+        $in: _ids,
+      }})
+      return deleteMany;
+    },
+
+
+    // mail
 
     // comment
     async createComment(root, {
