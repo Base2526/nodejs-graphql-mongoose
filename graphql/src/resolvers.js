@@ -1,4 +1,4 @@
-import {Bank, Post, Role, User, Comment, Mail} from './model'
+import {Bank, Post, Role, User, Comment, Mail, Socket} from './model'
 import {emailValidate} from './utils'
 
 const _ = require("lodash");
@@ -433,6 +433,61 @@ export default {
     },
 
     // Mail
+
+    // Socket
+    async Socket(root, {
+      _id
+    }) {
+
+      console.log("Socket >> ")
+
+      let data = await Socket.findById(_id);
+      return {
+        status:true,
+        data
+      }
+      
+    },
+    async Sockets(root, {
+      page,
+      perPage, 
+      sortField,
+      sortOrder, 
+      filter
+    }) {
+
+      console.log("Sockets >> ")
+
+      let start = Date.now()
+      let data = await Socket.find();
+
+      return {
+        status:true,
+        data,
+        executionTime: `Time to execute = ${
+          (Date.now() - start) / 1000
+        } seconds`
+      }
+    },
+    async getManySockets(root, {
+      _ids
+    }) {
+      console.log("getManySockets :", _ids)
+
+      let start = Date.now()
+      let data =  await Socket.find({_id: {
+        $in: _ids,
+      }})
+
+      return {
+        status:true,
+        data,
+        executionTime: `Time to execute = ${
+          (Date.now() - start) / 1000
+        } seconds`
+      }
+    },
+    // Socket
 
     // Comment 
     async Comment(root, {

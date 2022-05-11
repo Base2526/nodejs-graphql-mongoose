@@ -9,14 +9,7 @@ import {
     RadioButtonGroupInput
 } from 'react-admin';
 
-import {    RichTextInput, 	
-            RichTextInputToolbar,
-            RichTextInputLevelSelect,
-            FormatButtons,
-            ListButtons,
-            LinkButtons,
-            QuoteButtons,
-            ClearButtons, } from 'ra-input-rich-text';
+import {    RichTextInput  } from 'ra-input-rich-text';
 
 const MailsCreate = props => (
     <Create {...props}>
@@ -25,16 +18,7 @@ const MailsCreate = props => (
             <TextInput source="name" validate={[required()]} />
             {/* <RichTextInput label="Description" source="description" toolbar={<RichTextInputToolbar size="small" />}/> */}
             <RichTextInput
-                toolbar={
-                    <RichTextInputToolbar>
-                        {/* <RichTextInputLevelSelect size={10} /> */}
-                        <FormatButtons size={10} />
-                        <ListButtons size={10} />
-                        <LinkButtons size={10} />
-                        <QuoteButtons size={10} />
-                        <ClearButtons size={10} />
-                    </RichTextInputToolbar>
-                }
+               
                 label="Description"
                 source="description"
                 {...props}

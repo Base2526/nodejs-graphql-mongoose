@@ -1,63 +1,59 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom";
+import { applyMiddleware, createStore } from "redux";
+import { Provider } from "react-redux";
 
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  useQuery,
-  gql
-} from "@apollo/client";
+import thunk from "redux-thunk";
 
+// Logger with default options
+import { createLogger } from "redux-logger";
 
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+// persist
+import { persistStore, persistReducer } from "redux-persist";
+import storage from "redux-persist/lib/storage";
+import { PersistGate } from "redux-persist/integration/react";
+import { BrowserRouter, Switch } from "react-router-dom";
+import rootReducer from "./reducers";
+import App from "./App";
 
-const client = new ApolloClient({
-  uri: 'http://localhost:4040/graphql',
-  cache: new InMemoryCache()
+import "./App.css";
+import "bootstrap/dist/css/bootstrap.min.css";
+import "react-toastify/dist/ReactToastify.css";
+import "react-image-lightbox/style.css";
+import "react-lazy-load-image-component/src/effects/blur.css";
+import "react-datepicker/dist/react-datepicker.css";
+
+import "./custom.css";
+// import "./custom.scss";
+
+const persistConfig = {
+  key: "root",
+  storage,
+};
+
+const reducer = persistReducer(persistConfig, rootReducer);
+// persist
+
+// https://github.com/LogRocket/redux-logger/issues/6
+const logger = createLogger({
+  predicate: () => process.env.NODE_ENV !== "development",
+  // predicate: () => process.env.NODE_ENV !== 'production'
 });
 
-// client
-//   .query({
-//     query: gql`
-//       query User{
-//               User(_id: "6277293cc6551f01ee726df8"){
-//               status
-//               data{
-//                   id: _id
-//                   username
-//                   password
-//                   email
-//                   displayName
-//                   roles
-//                   isActive
-//                   image{
-//                       _id
-//                       size
-//                       type
-//                       lastModified
-//                       base64
-//                   }
-//                   lastAccess
-//               }
-//           }
-//       }
-//     `
-//   })
-//   .then(result => console.log(result));
+// thunk
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <ApolloProvider client={client}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  </ApolloProvider>
+const store = createStore(reducer, applyMiddleware(thunk, logger));
+const persistor = persistStore(store);
+
+ReactDOM.render(
+  <Provider store={store}>
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>,
+  document.getElementById("root")
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+// ReactDOM.render(<div>Hello world</div>, document.getElementById('root'));

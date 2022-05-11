@@ -68,36 +68,20 @@ const SocketsList = () => {
         // console.log("useEffect PostList : ", permissions)
     }, [])
   
-    return ( <List actions={<ListActions/>} filters={postFilters} >
-
-        {isSmall ? (
-                <SimpleList
-                    primaryText={record => record.name}
-                    // secondaryText={record => `${record.views} views`}
-                    // tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
-                />
-            ) : (
-        <Datagrid rowClick="show" >
-            {/* <ReferenceField source="userId" reference="users">
-                <TextField source="id" />
-            </ReferenceField> */}
-
-            {/* <ReferenceField source="userId" reference="users" label={'==NAME=='}>
-                <TextField source="name"  />
-            </ReferenceField> */}
-            {/* <ReferenceField source="userId" reference="users" label={'==EMAIL=='} >
-                <TextField source="email" />
-            </ReferenceField> */}
-            {/* <TextField source="id" label={'==ID=='} /> */}
-            <TextField source="name" label={'name'} />
-            <RichTextField source="description" label={'Description'} />
-
-            {/* <ShowButton /> */}
-            <EditButton />
-            <DeleteWithConfirmButton />
-        </Datagrid>)
-    }
-    </List>
+    return (<List filters={postFilters} >
+                {isSmall ? (
+                        <SimpleList
+                            primaryText={record => record.name}
+                            // secondaryText={record => `${record.views} views`}
+                            // tertiaryText={record => new Date(record.published_at).toLocaleDateString()}
+                        />
+                    ) : (
+                <Datagrid rowClick="show" >
+                    <TextField source="socketId" label={'Socket Id'} />
+                    <EditButton />
+                    <DeleteWithConfirmButton />
+                </Datagrid>)}
+            </List>
     )
 }
 

@@ -47,13 +47,10 @@ import {authProvider, dataProvider, i18nProvider} from './provider'
 
 const { faker } = require('@faker-js/faker');
 
-
 const App =()=> {
   // const { permissions } = usePermissions();
 
   useEffect(()=>{
-
-
     const randomPhoneNumber = faker.phone.phoneNumber();
     const im = faker.image.avatar()
 

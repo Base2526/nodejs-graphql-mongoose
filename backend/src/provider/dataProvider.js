@@ -231,12 +231,33 @@ const rest  = {
                     total:  data.length
                 }
             }
-
             case "sockets":{
+                let query = gql`
+                query Sockets{
+                    Sockets(
+                        page: ${page}
+                        perPage: ${perPage}
+                        sortField: "${field}"
+                        sortOrder: "${order}"
+                        filter: ${JSON.stringify(params.filter).replace(/"(\w+)":/g, '$1:').replace(/"(\d+)"/g, '$1')}
+                    ){
+                        status
+                        executionTime
+                        data{
+                            id: _id
+                            socketId
+                            userId
+                        }
+                    }
+                    }`;
 
+                let json1 = await client().query({ query });
+
+                console.log("json1 >> ", query, resource, json1) 
+                let data = json1.data.Sockets.data
                 return {
-                    data: [],
-                    total: 0,
+                    data:  data,
+                    total:  data.length
                 }
             }
 
@@ -273,6 +294,7 @@ const rest  = {
             }
         }
 
+        console.log("getList error") 
         return null;
 
         /*
@@ -338,6 +360,7 @@ const rest  = {
                 data: json1.data.Post.data,
                }
             }
+
             case "users" :{
                 let query = gql`
                             query User{
@@ -373,6 +396,7 @@ const rest  = {
                     data: json1.data.User.data,
                 }
             }
+
             case "roles" :{
                 let query = gql`
                             query Role{
@@ -397,6 +421,7 @@ const rest  = {
                 data: json1.data.Role.data,
                }
             }
+
             case "banks" :{
                 let query = gql`
                             query Bank{
@@ -449,10 +474,27 @@ const rest  = {
             }
 
             case "sockets": {
-                return {
-                    data: []
-                }
+                let query = gql`
+                    query Socket{
+                        Socket(_id: "${params.id}"){
+                        status
+                        data{
+                            id: _id
+                            socketId
+                            userId
+                        }
+                    }
+                }`;
 
+                // console.log("gql :", query )
+                let json1 = await client().query({ query });
+                // let data = json1.data.allPosts.data
+
+                console.log("getOne :", resource, params, json1)
+                
+                return {
+                    data: json1.data.Socket.data,
+                }
             }
 
             case "mails": {

@@ -3,6 +3,7 @@ import { gql } from "apollo-server";
 export default gql`
   scalar DATETIME
   scalar Long
+  scalar Date
   
   type Room {
     _id: ID
@@ -120,6 +121,12 @@ export default gql`
     isPublish: Int
   }
 
+  type Socket {
+    _id: ID!
+    socketId: String!
+    userId: String
+  }
+
   type Comment{
     _id: ID!
     body: String!
@@ -176,6 +183,18 @@ export default gql`
     data:[Mail]
   }
 
+  type SocketPayLoad {
+    status:Boolean
+    executionTime:String
+    data:Socket
+  }
+
+  type SocketsPayLoad {
+    status:Boolean
+    executionTime:String
+    data:[Socket]
+  }
+
   type CommentPayLoad{
     status:Boolean
     executionTime:String
@@ -212,6 +231,9 @@ export default gql`
     Mails(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): MailsPayLoad
     getManyMails(_ids: [ID!]!): MailsPayLoad
 
+    Socket(_id: ID!): SocketPayLoad
+    Sockets(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): SocketsPayLoad
+    getManySockets(_ids: [ID!]!): SocketsPayLoad
 
     Post(_id: ID!): PostPayLoad
     allPosts(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): PostsPayLoad
@@ -335,6 +357,5 @@ export default gql`
     count: Int!
   }
 
-  scalar Date
-
+  
 `;
