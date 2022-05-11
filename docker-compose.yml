@@ -1,28 +1,21 @@
 version: "3"
 
 services:
-#   ################################
-#   #   Setup react app container
-#   ################################
-#   web:
-#     # build: ./client
-#     build:
-#       context: ./client
-#       dockerfile: Dockerfile.dev
-#     environment:
-#       CHOKIDAR_USEPOLLING: "true"
-#     ports: # << develop
-#       - "80:3000"
-
-#     # ports: # << production
-#     #   - "80:80"
-    
-#     volumes:
-#       - ./client:/app
-#     networks:
-#       - nodejs-network
-#       # volumes:
-#       # - ./src:/app/src
+  ################################
+  #   Setup frontend react app container
+  ################################
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    environment:
+      CHOKIDAR_USEPOLLING: "true"
+    ports:
+      - "80:3000"
+    volumes:
+      - ./frontend:/app
+    networks:
+      - nodejs-network
 
   ################################
   #   Setup REDIS Server
@@ -75,27 +68,31 @@ services:
   ################################
   #   Setup React-admin container
   ################################
-  # react-admin:
-  #   build: ./react-admin
-  #   ports:
-  #     - "4041:4041"
-  #   volumes:
-  #     - ./react-admin:/app
-  #   environment:
-  #     - CHOKIDAR_USEPOLLING=true
-  #   networks:
-  #     - nodejs-network
+  backend:
+    # build:
+    #   - context: ./backend
+    #   - dockerfile: Dockerfile
+    build: ./backend
+    environment:
+      - CHOKIDAR_USEPOLLING= "true"
+      - PORT= 4049
+    ports:
+      - "8082:4049"
+    volumes:
+      - ./backend:/app
+    networks:
+      - nodejs-network
   ################################
   
   ################################
   #   Setup Api Graphql container
   ################################
-  api-graphql:
-    build: ./api-graphql
+  graphql:
+    build: ./graphql
     ports:
       - "4040:4040"
     volumes:
-      - ./api-graphql:/app
+      - ./graphql:/app
     environment:
       - CHOKIDAR_USEPOLLING=true
 
@@ -103,6 +100,7 @@ services:
       - ELASTIC_USERNAME=elastic
       - ELASTIC_PASSWORD=changeme
       - ELASTIC_INDEX=banlist_dev
+      - PORT=4040
     networks:
       - nodejs-network
   ################################

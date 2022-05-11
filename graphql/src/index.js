@@ -16,10 +16,9 @@ import connection from './mongo'
 import typeDefs from "./typeDefs";
 import resolvers from "./resolvers";
 
-import {Bank, Post, Role, User, Comment, Mail, SocketModel} from './model'
+import {Bank, Post, Role, User, Comment, Mail, Socket} from './model'
 
-let PORT = /*process.env.PORT || */ 4040;
-
+let PORT = process.env.PORT || 4040;
 
 // // TODO: initial and connect to MongoDB
 // mongoose.Promise = global.Promise;
@@ -82,27 +81,29 @@ async function startApolloServer(typeDefs, resolvers) {
   app.use(cors())
 
   server.applyMiddleware({ app });
-  await new Promise(resolve => httpServer.listen({ port: PORT }, resolve));
-  console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}`);
+  let resolve = await new Promise(resolve => httpServer.listen({ port: PORT }, resolve({"status": true})));
+  console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}` , resolve);
 
-  io.on('connection', async(socket) => {
+  await Socket.deleteMany({})
+
+  io.on('connection', async(soc) => {
 
     // global.socket = socket
-    let handshake = socket.handshake;
+    let handshake = soc.handshake;
 
     let query = handshake.query;
 
-    console.log('A client connected', socket.id, query.x)
+    console.log('A client connected', soc.id, query.x)
 
-    await SocketModel.findOneAndUpdate({socketId: socket.id}, {updatedAt: Date.now() }, {
+    await Socket.findOneAndUpdate({socketId: soc.id}, {updatedAt: Date.now() }, {
       new: true,
       upsert: true,
     });
 
-    socket.on("disconnect", async () => {
-      console.log("A client disconnect", socket.id)
+    soc.on("disconnect", async () => {
+      console.log("A client disconnect", soc.id)
 
-      await SocketModel.remove({socketId: socket.id })
+      await Socket.deleteOne({socketId: soc.id })
     })
 
   });

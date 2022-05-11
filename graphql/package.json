@@ -4,7 +4,7 @@
   "description": "A blazing fast GraphQL APIs with Node.js and MongoDB.",
   "main": "server.js",
   "scripts": {
-    "start": "nodemon --exec babel-node src/server.js"
+    "start": "nodemon --exec babel-node src/index.js"
   },
   "keywords": [],
   "author": "Sorawit",

@@ -10,7 +10,8 @@ const modelExists =()=>{
       console.log('Not found, creating');
       let newSettings = new Bank({});
       await newSettings.save();
-      await Bank.remove({})
+
+      await Bank.deleteMany({})
     }
   });
 
@@ -21,7 +22,8 @@ const modelExists =()=>{
       console.log('Not found, creating');
       let newSettings = new Post({});
       await newSettings.save();
-      await Post.remove({})
+
+      await Post.deleteMany({})
     }
   });
 
@@ -33,7 +35,7 @@ const modelExists =()=>{
       let newSettings = new Role({});
       newSettings.save();
 
-      await Role.remove({})
+      await Role.deleteMany({})
     }
   });
 
@@ -45,7 +47,7 @@ const modelExists =()=>{
       let newSettings = new Socket({});
       await newSettings.save();
 
-      await Socket.remove({})
+      await Socket.deleteMany({})
     }
   });
 
@@ -57,7 +59,7 @@ const modelExists =()=>{
       let newSettings = new User({});
       await newSettings.save();
 
-      await User.remove({})
+      await User.deleteMany({})
     }
   });
 }
@@ -78,16 +80,10 @@ mongoose.connect(
 );
 
 const connection = mongoose.connection;
-connection.on("error", console.error.bind(console, "mongoose : connection error:"));
+connection.on("error", console.error.bind(console, "Error : Connection to database"));
 connection.once("open", async function () {
   // we're connected!
-  console.log("mongoose : Connected successfully to database!");
-
-  // mongoose.model("bank", BankModel);
-  // mongoose.model("post", PostModel);
-  // mongoose.model("role", RoleModel);
-  // mongoose.model("room", RoomModel);
-  // mongoose.model("user", UserModel);
+  console.log("Successfully : Connected to database!");
 
   modelExists()
 });
