@@ -69,9 +69,6 @@ services:
   #   Setup React-admin container
   ################################
   backend:
-    # build:
-    #   - context: ./backend
-    #   - dockerfile: Dockerfile
     build: ./backend
     environment:
       - CHOKIDAR_USEPOLLING= "true"
