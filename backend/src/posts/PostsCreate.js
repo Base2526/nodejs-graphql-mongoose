@@ -20,7 +20,8 @@ import {
         Toolbar,
         SaveButton,
         useCreate,
-        DateInput
+        DateInput,
+        FileField
         } from "react-admin"
 
 import { RichTextInput } from 'ra-input-rich-text';
@@ -141,8 +142,9 @@ const PostsCreate = props =>{
                 {/* <RichTextInput label="Body" source="body" helperText={"helperText"} /> */}
                 <RichTextInput label="Body" source="body" fullWidth validate={required()}  css={{'.ql-editor': {minHeight: 300}}}/>
     
-                <FileInput source="files" label="Files & VDO" multiple={true} maxSize={5000000} helperText={"helperText"}>
+                <FileInput source="files" accept="image/png, image/jpg, image/jpeg" label="Files" multiple={true} maxSize={5000000} helperText={"helperText"}>
                     <ImageField source="src" title="title" />
+                    {/* <FileField source="src" title="title" /> */}
                 </FileInput> 
                 
                 <ReferenceArrayInput  source="follows" reference="users" >

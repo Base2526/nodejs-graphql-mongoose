@@ -14,6 +14,8 @@ import { Link } from 'react-router-dom';
 import { useTranslate, useGetList } from 'react-admin';
 import { subDays } from 'date-fns';
 
+import _ from 'lodash'
+
 import CardWithIcon from './CardWithIcon';
 // import { Customer } from '../types';
 
@@ -38,7 +40,7 @@ const NewPosts = () => {
 
     const nb = visitors ? visitors.reduce((nb) => ++nb, 0) : 0;
 
-    console.log("nb : ", nb, visitors)
+    console.log("NewPosts nb : ", nb, visitors)
     return (
         <CardWithIcon
             to="/posts"
@@ -56,7 +58,7 @@ const NewPosts = () => {
                               key={record.id}
                           >
                               <ListItemAvatar>
-                                  <Avatar src={`${record.files0base64}`} />
+                                  <Avatar src={`${_.isEmpty(record.files) ? "" : record.files[0].base64}`} />
                               </ListItemAvatar>
                               <ListItemText
                                   primary={`${record.title}`}

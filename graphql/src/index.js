@@ -80,7 +80,11 @@ async function startApolloServer(typeDefs, resolvers) {
 
   app.use(cors())
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({  app, 
+                            bodyParserConfig: {
+                              limit: '100mb',
+                            }
+                          });
   let resolve = await new Promise(resolve => httpServer.listen({ port: PORT }, resolve({"status": true})));
   console.log(`🚀 Server ready at http://localhost:${PORT}${server.graphqlPath}` , resolve);
 
@@ -105,6 +109,17 @@ async function startApolloServer(typeDefs, resolvers) {
 
       await Socket.deleteOne({socketId: soc.id })
     })
+
+    // https://stackoverflow.com/questions/20337832/is-socket-io-emit-callback-appropriate
+    /*
+    client send data to server
+    */
+    soc.on('follow', (data, callback) => {
+      console.log(`follow received is ${data}`)
+      // return {result : "folow function()"}
+
+      callback({data});
+    });
 
   });
 }

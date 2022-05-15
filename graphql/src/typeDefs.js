@@ -62,6 +62,7 @@ export default gql`
     status:Boolean
     executionTime:String
     data:[User]
+    total: Int
   }
 
   # type Comment {
@@ -145,6 +146,7 @@ export default gql`
     status:Boolean
     executionTime:String
     data:[Post]
+    total: Int
   }
 
   type RolePayLoad {
@@ -205,6 +207,7 @@ export default gql`
     status:Boolean
     executionTime:String
     data:[Comment]
+    total: Int
   }
 
   type Query {
@@ -236,13 +239,14 @@ export default gql`
     getManySockets(_ids: [ID!]!): SocketsPayLoad
 
     Post(_id: ID!): PostPayLoad
-    allPosts(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): PostsPayLoad
+    Posts(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): PostsPayLoad
     _allPostsMeta(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): ListMetadata
+    getManyPosts(_ids: [ID!]!): PostsPayLoad
   
     
     Comment(_id: ID!): CommentPayLoad
     Comments(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): CommentsPayLoad
-  }
+  }  
   
   input RoomInput {
     name: String

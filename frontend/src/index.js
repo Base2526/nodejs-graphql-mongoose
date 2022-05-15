@@ -8,6 +8,14 @@ import thunk from "redux-thunk";
 // Logger with default options
 import { createLogger } from "redux-logger";
 
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+
 // persist
 import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
@@ -45,14 +53,22 @@ const logger = createLogger({
 const store = createStore(reducer, applyMiddleware(thunk, logger));
 const persistor = persistStore(store);
 
+
+const client = new ApolloClient({
+  uri: 'http://localhost:4040/graphql',
+  cache: new InMemoryCache()
+});
+
 ReactDOM.render(
-  <Provider store={store}>
-    <PersistGate loading={null} persistor={persistor}>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </PersistGate>
-  </Provider>,
+  <ApolloProvider client={client}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </PersistGate>
+    </Provider>
+  </ApolloProvider>,
   document.getElementById("root")
 );
 

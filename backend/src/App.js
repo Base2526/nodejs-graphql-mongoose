@@ -37,6 +37,8 @@ import comments from './comments'
 import sockets from './sockets'
 import mails from './mails'
 
+import devel from './devel'
+
 
 import {Login, Register, ForgotPassword, NotFound} from './settings'
 
@@ -51,10 +53,10 @@ const App =()=> {
   // const { permissions } = usePermissions();
 
   useEffect(()=>{
-    const randomPhoneNumber = faker.phone.phoneNumber();
-    const im = faker.image.avatar()
+    // const randomPhoneNumber = faker.phone.phoneNumber();
+    // const im = faker.image.avatar()
 
-    console.log("randomPhoneNumber :", randomPhoneNumber, im)
+    // console.log("randomPhoneNumber :", randomPhoneNumber, im)
 
     localStorage.setItem(
       "userProfile",
@@ -84,6 +86,8 @@ const App =()=> {
         <Resource name="users" icon={SupervisedUserCircle} {...users} />
         <Resource name="sockets" icon={PowerIcon} {...sockets} />
         <Resource name="mails" icon={EmailIcon} {...mails} />
+        {/* devel */}
+        <Resource name="devel" icon={EmailIcon} {...devel} />
         <Resource options={{ label:'Taxonomy : roles' }} name="roles"  icon={AddCard} {...roles} />
         <Resource options={{ label:'Taxonomy : banks' }} name="banks"  icon={AccountBalanceWalletIcon} {...banks} />
         <CustomRoutes>

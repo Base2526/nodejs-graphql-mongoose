@@ -33,8 +33,6 @@ const rest  = {
 
     getList: async(resource, params) => {
 
-        console.log("getList :", resource, params)
-
         const { page, perPage } = params.pagination;
         const { field, order } = params.sort;
         const query = {
@@ -43,11 +41,13 @@ const rest  = {
             filter: JSON.stringify(params.filter),
         };
 
+        console.log("getList :", resource, params, query)
+
         switch(resource){
             case "posts":{
                 let query = gql`
-                query allPosts{
-                  allPosts(
+                query Posts{
+                    Posts(
                     page: ${page}
                     perPage: ${perPage}
                     sortField: "${field}"
@@ -55,6 +55,7 @@ const rest  = {
                     filter: ${JSON.stringify(params.filter).replace(/"(\w+)":/g, '$1:').replace(/"(\d+)"/g, '$1')}
                   ){
                     status
+                    total
                     executionTime
                     data{
                         id: _id
@@ -86,11 +87,16 @@ const rest  = {
 
                 console.log("query :", query)
 
-                let json1 = await client().query({ query });
-                let data = json1.data.allPosts.data
+                let json1 = await client().query({ query } , { errorPolicy: 'all' });
+
+                
+                let data = json1.data.Posts.data
+                let total = json1.data.Posts.total
+
+                console.log("query json1 :", data)
                 return {
                     data:  data,
-                    total:  data.length
+                    total
                 }
             }
      
@@ -105,6 +111,7 @@ const rest  = {
                         filter: ${JSON.stringify(params.filter).replace(/"(\w+)":/g, '$1:').replace(/"(\d+)"/g, '$1')}
                     ){
                         status 
+                        total
                         executionTime
                         data{
                             id: _id
@@ -131,9 +138,10 @@ const rest  = {
 
                 console.log("json1 >> ", query, resource, json1) 
                 let data = json1.data.Users.data
+                let total = json1.data.Users.total
                 return {
                     data:  data,
-                    total:  data.length
+                    total
                 }
             }
 
@@ -211,6 +219,7 @@ const rest  = {
                         filter: ${JSON.stringify(params.filter).replace(/"(\w+)":/g, '$1:').replace(/"(\d+)"/g, '$1')}
                     ){
                         status
+                        total
                         executionTime
                         data{
                             id: _id
@@ -224,13 +233,15 @@ const rest  = {
 
                 let json1 = await client().query({ query });
 
-                console.log("json1 >> ", query, resource, json1) 
+                console.log("json1  comments >>  ", query, resource, json1) 
                 let data = json1.data.Comments.data
+                let total =  json1.data.Comments.total
                 return {
                     data:  data,
-                    total:  data.length
+                    total
                 }
             }
+
             case "sockets":{
                 let query = gql`
                 query Sockets{
@@ -352,7 +363,6 @@ const rest  = {
         
                 console.log("gql :", query )
                 let json1 = await client().query({ query });
-                // let data = json1.data.allPosts.data
         
                 console.log("getOne :", resource, params, json1.data.Post.data)
                
@@ -464,7 +474,6 @@ const rest  = {
 
                 // console.log("gql :", query )
                 let json1 = await client().query({ query });
-                // let data = json1.data.allPosts.data
 
                 console.log("getOne :", resource, params, json1)
                 
@@ -488,7 +497,6 @@ const rest  = {
 
                 // console.log("gql :", query )
                 let json1 = await client().query({ query });
-                // let data = json1.data.allPosts.data
 
                 console.log("getOne :", resource, params, json1)
                 
@@ -513,7 +521,6 @@ const rest  = {
 
                 // console.log("gql :", query )
                 let json1 = await client().query({ query });
-                // let data = json1.data.allPosts.data
 
                 console.log("getOne :", resource, params, json1)
                 
@@ -525,7 +532,7 @@ const rest  = {
         }
        
     },
-    getMany: async(resource, params) => {
+    getMany: async (resource, params) => {
 
         console.log("getMany :", resource, params)
 
@@ -533,7 +540,7 @@ const rest  = {
             case "users":{
                 let _ids = JSON.stringify(params.ids)
 
-                console.log("gql :" , _ids)
+                // console.log("gql :" , _ids)
                 let query = gql`
                 query getManyUsers{
                     getManyUsers(_ids: ${_ids}){
@@ -556,11 +563,11 @@ const rest  = {
                     }
                 }`;
 
-                console.log("gql :", query , _ids)
+               //  console.log("gql :", query , _ids)
                 let json1 = await client().query({ query });
                 // // let data = json1.data.allPosts.data
 
-                console.log("getMany :", resource, params, json1)
+                // console.log("getMany :", resource, params, json1)
             
                 return {
                     data: json1.data.getManyUsers.data,
@@ -622,6 +629,33 @@ const rest  = {
                 }
                 
             }
+
+            case "posts":{
+                let _ids = JSON.stringify(params.ids)
+
+                console.log("gql :" , _ids)
+                let query = gql`
+                query getManyPosts{
+                    getManyPosts(_ids: ${_ids}){
+                        status
+                        data{
+                            id: _id
+                            title
+                        }
+                    }
+                }`;
+
+                console.log("gql  query :", query , _ids)
+                let json1 = await client().query({ query });
+                // // let data = json1.data.allPosts.data
+
+                console.log("getMany :", resource, params, json1)
+            
+                return {
+                    data: json1.data.getManyPosts.data,
+                }
+                
+            }
         }
 
         const query = {
@@ -631,18 +665,18 @@ const rest  = {
         // console.log("getMany :", resource, params, url)
         return httpClient(url).then(({ json }) => ({ data: json }));
     },
-    getManyReference: (resource, params) => {
+    getManyReference: async (resource, params) => {
         console.log("getManyReference :", resource, params )
-        // const { page, perPage } = params.pagination;
-        // const { field, order } = params.sort;
-        // const query = {
-        //     sort: JSON.stringify([field, order]),
-        //     range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
-        //     filter: JSON.stringify({
-        //         ...params.filter,
-        //         [params.target]: params.id,
-        //     }),
-        // };
+        const { page, perPage } = params.pagination;
+        const { field, order } = params.sort;
+        const query = {
+            sort: JSON.stringify([field, order]),
+            range: JSON.stringify([(page - 1) * perPage, page * perPage - 1]),
+            filter: JSON.stringify({
+                ...params.filter,
+                [params.target]: params.id,
+            }),
+        };
         // const url = `${apiUrl}/${resource}?${stringify(query)}`;
 
         // console.log("getManyReference :", resource, params, url)
@@ -653,10 +687,41 @@ const rest  = {
 
         switch(resource){
             case "comments":{
+
+                let query = gql`
+                        query Comments{
+                            Comments(
+                                page: ${page}
+                                perPage: ${perPage}
+                                sortField: "${field}"
+                                sortOrder: "${order}"
+                                filter: ${JSON.stringify(params.filter).replace(/"(\w+)":/g, '$1:').replace(/"(\d+)"/g, '$1')}
+                            ){
+                                status
+                                executionTime
+                                data{
+                                    id: _id
+                                    body
+                                    postId
+                                    createdAt
+                                    updatedAt
+                                }
+                            }
+                        }`;
+
+                let json1 = await client().query({ query });
+
+                console.log("json1 >> ", query, resource, json1) 
+                let data = json1.data.Comments.data
                 return {
-                    data:[{id:1222, body: "xxx", created_at: '2022-05-04T09:43:46.263Z'}],
-                    total: 1
+                    data:  data,
+                    total:  data.length
                 }
+
+                // return {
+                //     data:[{id:1222, body: "xxx", created_at: '2022-05-04T09:43:46.263Z'}],
+                //     total: 1
+                // }
 
             }
         }
@@ -680,8 +745,12 @@ const rest  = {
                                                     }`;
 
                 console.log("mutation", mutation)
+                // console.dir(mutation)
+                // copy(mutation)
 
                 let data =  await client().mutate({ mutation });
+
+                console.log("mutation json1 :", data)
                 return { data: data.data.updatePost }
             }
 

@@ -32,7 +32,8 @@ import {List, Datagrid, TextField, ReferenceField,  TopToolbar,
     DateField,
     RichTextField,
     useGetIdentity,
-    useResourceContext 
+    useResourceContext ,
+    ChipField
 } from "react-admin"
 
 import { makeStyles } from '@material-ui/core/styles';
@@ -115,9 +116,24 @@ export const PostsList = () => {
             <RichTextField source="body" label={'Body'} />
             <DateField source="createdAt" label={'Created at'} showTime locales="th-TH"/>
              
+
+            {/* <ReferenceArrayField
+                        label="Follows"
+                        reference="users"
+                        source="follows"
+                        // sortBy="roles.name"
+                        // sort={{ field: 'name', order: 'ASC' }}
+                        // cellClassName={classes.hiddenOnSmallScreens}
+                        // headerClassName={classes.hiddenOnSmallScreens}
+                    >
+                <SingleFieldList>
+                    <ChipField source="name" size="small" />
+                </SingleFieldList>
+            </ReferenceArrayField> */}
+
             <ShowButton />
             <EditButton />
-            <MyImageField source="title"></MyImageField>
+            {/* <MyImageField source="title"></MyImageField> */}
             <DeleteWithConfirmButton />
         </Datagrid>)
     }

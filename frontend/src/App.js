@@ -114,7 +114,7 @@ const App = (props) => {
     // }
     // socketid()
 
-    socketid();
+    // socketid();
 
     console.log("props.user >>", props.user);
   }, [props.user]);

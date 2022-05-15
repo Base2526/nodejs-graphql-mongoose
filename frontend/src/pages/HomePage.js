@@ -6,6 +6,14 @@ import ls from "local-storage";
 import ReactPaginate from "react-paginate";
 import { isMobile } from "react-device-detect";
 
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  useQuery,
+  gql
+} from "@apollo/client";
+
 import UseHomeItem from "./UseHomeItem";
 import LoginDialog from "./LoginDialog";
 import ModalFollwersDialog from "./ModalFollwersDialog";
@@ -30,6 +38,8 @@ import Autocomplete from "../components/Autocomplete";
 import Comment from "../comments/Comment";
 import { SEARCH_RESET } from "../constants";
 
+import {EXCHANGE_RATES, POSTS} from '../gql'
+
 var _ = require("lodash");
 
 let {
@@ -41,6 +51,9 @@ let {
   REACT_APP_AXIOS_TIMEOUT,
 } = process.env;
 
+
+
+
 let socket = undefined;
 const HomePage = (props) => {
   // const [currentNids, setCurrentNids] = useState([]);
@@ -51,7 +64,7 @@ const HomePage = (props) => {
   const [allResultCount, setAllResultCount] = useState(0);
 
   const [searchWord, setSearchWord] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [showModalLogin, setShowModalLogin] = useState(false);
   const [showModalReport, setShowModalReport] = useState(false);
   const [showModalFollwersDialog, setShowModalFollwersDialog] = useState(false);
@@ -94,10 +107,26 @@ const HomePage = (props) => {
     console.log("conversation > response :", response._id);
   };
 
-  useEffect(async () => {
-    // test();
 
-    console.log("useEffect ");
+  // async function fetchData() {
+
+  
+  // console.log("loa >>>", loa, error, data)
+
+  // setLoading(loa)
+
+  const useQueryPosts = () =>{
+    const { loading, error, data } =  useQuery(POSTS);
+  
+    return { loading, error, data }
+  }
+
+  let { loading, error, data } = useQueryPosts()
+
+  console.log("useEffect query:  ",  );
+
+  /*
+  useEffect(async () => {
 
     const params = new URLSearchParams(window.location.search); // id=123
     let p = params.get("p");
@@ -153,6 +182,8 @@ const HomePage = (props) => {
       });
     };
   }, [currentDatas]);
+
+  */
 
   const sycContent = (i) => {
     // console.log("sycContent :", i);
@@ -211,7 +242,7 @@ const HomePage = (props) => {
           search_category: selectedCheckboxes,
         });
 
-        setLoading(true);
+        // setLoading(true);
 
         let response = await axios.post(
           REACT_APP_DEBUG ? "/v1/search" : REACT_APP_URL_SERVER + "/v1/search",
@@ -247,7 +278,7 @@ const HomePage = (props) => {
         console.log("Error", e.message);
       }
 
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -257,7 +288,7 @@ const HomePage = (props) => {
 
   const fetch = async () => {
     try {
-      setLoading(true);
+      // setLoading(true);
       let response = await axios.post(
         REACT_APP_DEBUG ? "/v1/search" : REACT_APP_URL_SERVER + "/v1/search",
         {
@@ -304,7 +335,7 @@ const HomePage = (props) => {
       console.log("Error", e.message);
     }
 
-    setLoading(false);
+    // setLoading(false);
   };
 
   const toggleCheckbox = (data) => {
@@ -333,6 +364,89 @@ const HomePage = (props) => {
     }
   };
 
+  const renderContent = () => {
+    if (loading) {
+      return <CircularProgress />;
+    } else {
+      // return data.map((item, index) => {}
+      console.log("renderContent : ", data)
+      return  _.map(data.Posts.data, (item, index)=>{
+                return <UseHomeItem
+                          key={index}
+                          {...props}
+                          item={item}
+                          updateState={updateState}
+                          addFollowData={(data) => {
+                            console.log(
+                              "addFollowData : ",
+                              data,
+                              currentDatas,
+                              props.user._id
+                            );
+              
+                            let new_data = _.map(currentDatas, (item, key) => {
+                              if (data._id == item._id) {
+                                if (_.has(item, "followers")) {
+                                  let followers = item.followers;
+                                  let find = _.find(
+                                    followers,
+                                    (i, j) => i.uid == props.user._id
+                                  );
+              
+                                  if (_.isEmpty(find)) {
+                                    followers = [
+                                      ...followers,
+                                      { uid: props.user._id, status: data.status },
+                                    ];
+                                  } else {
+                                    followers = _.map(followers, (i, j) => {
+                                      if (i.uid === props.user._id) {
+                                        i.status = data.status;
+                                      }
+                                      return i;
+                                    });
+                                  }
+              
+                                  item = {
+                                    ...item,
+                                    followers,
+                                  };
+                                } else {
+                                  item = {
+                                    ...item,
+                                    followers: [{ uid: props.user._id, status: data.status }],
+                                  };
+                                }
+                              }
+              
+                              return item;
+                            });
+                            console.log("addFollowData : new_data ", new_data);
+              
+                            setCurrentDatas(new_data);
+              
+                            props.addFollowData(data);
+                          }}
+                          onComment={(data) => {
+                            console.log("onComment open > ", data);
+                            setIsPaneOpen(true);
+                            setCommentNid(data._id);
+                          }}
+                          onOpenModalFollwers={(data) => {
+                            console.log("setShowModalFollwersDialog : ", data);
+                            setShowModalFollwersDialog(data.is_open);
+                            setDataModalFollwer(
+                              _.isEmpty(data.item.followers) ? [] : data.item.followers
+                            );
+                          }}
+                          // is_open: true
+                          // item
+                        />
+              })
+    }
+  }
+
+  /*
   const renderContent = () => {
     if (loading) {
       return <CircularProgress />;
@@ -420,6 +534,7 @@ const HomePage = (props) => {
       });
     }
   };
+  */
 
   const onSetOffset = (data) => {
     setOffset(data * pageLimit);

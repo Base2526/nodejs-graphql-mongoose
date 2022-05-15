@@ -12,8 +12,9 @@ let {
   REACT_APP_GEOLOCATION,
 } = process.env;
 
-let socket = undefined;
+let soc = undefined;
 const socketIO = async (props) => {
+  /*
   let { user } = props;
 
   console.log("props >> user :", props, user._id);
@@ -33,16 +34,18 @@ const socketIO = async (props) => {
       }
     }
   }
+  */
+ /*
 
   if (_.isEmpty(socket)) {
     socket = io(REACT_APP_DEBUG ? REACT_APP_URL_SERVER : "" + "/", {
       "sync disconnect on unload": true,
-      query: {
-        version: REACT_APP_VERSIONS,
-        device_detect: JSON.stringify(deviceDetect()),
-        geolocation: JSON.stringify(await geolocation()),
-        auth_token: _.isEmpty(user) ? 0 : user._id,
-      },
+      // query: {
+      //   version: REACT_APP_VERSIONS,
+      //   device_detect: JSON.stringify(deviceDetect()),
+      //   geolocation: JSON.stringify(await geolocation()),
+      //   auth_token: _.isEmpty(user) ? 0 : user._id,
+      // },
     });
   }
 
@@ -52,6 +55,21 @@ const socketIO = async (props) => {
   }
 
   return socket;
+  */
+
+  if(!_.isEmpty(soc)){
+    return soc;
+  }
+
+  soc = io("http://localhost:4040" , { transports : ['websocket'], query: {  x: 42} })
+
+  if (soc.connected === false && soc.connecting === false) {
+      // use a connect() or reconnect() here if you want
+      soc.connect();
+      console.log("socket")
+  }
+
+  return soc;
 };
 
 const geolocation = async () => {

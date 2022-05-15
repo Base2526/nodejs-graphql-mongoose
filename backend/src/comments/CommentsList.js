@@ -112,11 +112,10 @@ export const CommentsList = () => {
                 />
             ) : (
         <Datagrid rowClick="show">
-            {/* <TextField source="title" label={'Title'} /> */}
             <RichTextField source="body" label={'Comment'} />
             <DateField source="createdAt" label={'Created at'} showTime locales="th-TH"/>
 
-            <ReferenceField label="postId" source="postId" reference="posts">
+            <ReferenceField label="Post name" source="postId" reference="posts">
                 <TextField source="title" />
             </ReferenceField>
             <ShowButton />

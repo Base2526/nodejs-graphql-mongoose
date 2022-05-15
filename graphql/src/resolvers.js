@@ -139,11 +139,16 @@ export default {
                     (Date.now() - start) / 1000
                   } seconds` )
 
-      let data = await User.find();
+      // let data = await User.find();
+      let data = await  User.find({}).limit(perPage).skip(page).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 });
+      
+      let total = (await User.find({}).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 })).length;
+      console.log("total  ", total)
 
       return {
         status:true,
         data,
+        total,
         executionTime: `Time to execute = ${
           (Date.now() - start) / 1000
         } seconds`
@@ -210,9 +215,7 @@ export default {
         data
       }
     },
-    // allPosts(page: Int, perPage: Int, sortField: String, sortOrder: String, filter: PostFilter): [Post]
-
-    async allPosts(root, {
+    async Posts(root, {
       page,
       perPage, 
       sortField,
@@ -222,7 +225,7 @@ export default {
 
       let start = Date.now()
 
-      console.log("allPosts: page : ", page,
+      console.log("Posts: page : ", page,
                   ", perPage : ", perPage, 
                   ", sortField : ", sortField,
                   ", sortOrder : ", sortOrder, 
@@ -231,7 +234,33 @@ export default {
                     (Date.now() - start) / 1000
                   } seconds` )
 
-      let data = await Post.find();
+
+      let data = await  Post.find({}).limit(perPage).skip(page).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 });
+      
+      let total = (await Post.find({}).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 })).length;
+      console.log("total  ", total)
+
+      // let data = await Post.find();
+
+      return {
+        status:true,
+        data,
+        total,
+        executionTime: `Time to execute = ${
+          (Date.now() - start) / 1000
+        } seconds`
+      }
+    },
+
+    async getManyPosts(root, {
+      _ids
+    }) {
+      console.log("getManyPosts :", _ids)
+
+      let start = Date.now()
+      let data =  await Post.find({_id: {
+        $in: _ids,
+      }})
 
       return {
         status:true,
@@ -328,7 +357,7 @@ export default {
 
       let start = Date.now()
 
-      console.log("allPosts: page : ", page,
+      console.log("Banks: page : ", page,
                   ", perPage : ", perPage, 
                   ", sortField : ", sortField,
                   ", sortOrder : ", sortOrder, 
@@ -391,7 +420,7 @@ export default {
 
       let start = Date.now()
 
-      console.log("allPosts: page : ", page,
+      console.log("Mails: page : ", page,
                   ", perPage : ", perPage, 
                   ", sortField : ", sortField,
                   ", sortOrder : ", sortOrder, 
@@ -510,7 +539,7 @@ export default {
 
       let start = Date.now()
 
-      console.log("allPosts: page : ", page,
+      console.log("Comments: page : ", page,
                   ", perPage : ", perPage, 
                   ", sortField : ", sortField,
                   ", sortOrder : ", sortOrder, 
@@ -519,11 +548,18 @@ export default {
                     (Date.now() - start) / 1000
                   } seconds` )
 
-      let data = await Comment.find();
+      // let data = await Comment.find();
+
+      // let data = await User.find();
+      let data = await  Comment.find({}).limit(perPage).skip(page).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 });
+
+      let total = (await Comment.find({}).sort({[sortField]: sortOrder === 'ASC' ? 1 : -1 })).length;
+      console.log("total  ", total)
 
       return {
         status:true,
         data,
+        total,
         executionTime: `Time to execute = ${
           (Date.now() - start) / 1000
         } seconds`

@@ -29,6 +29,8 @@ import { isEmpty, commaFormatted, ReadMore } from "../utils";
 
 import preview from "../images/person_110935.png";
 
+import { socketIO } from "../SocketioClient";
+
 // import song from "./mixkit-slot-machine-win-1928.wav";
 
 var _ = require("lodash");
@@ -537,8 +539,10 @@ const UseHomeItem = (props) => {
       return <div />;
     }
 
-    let thumbnail = item.images;
-    let medium = item.images;
+    console.log("embedResponsive : ", item)
+
+    let thumbnail = item.files;
+    let medium = item.files;
 
     if (_.isEmpty(thumbnail)) {
       return <div />;
@@ -556,7 +560,7 @@ const UseHomeItem = (props) => {
         >
           <img
             className="embed-responsive-item"
-            src={process.env.REACT_APP_URL_SERVER + thumbnail[0].path}
+            src={thumbnail[0].base64}
             alt="thumbnail"
           />
         </div>
@@ -569,14 +573,12 @@ const UseHomeItem = (props) => {
             //   medium[(photoIndex + medium.length - 1) % medium.length].url
             // }
 
-            mainSrc={process.env.REACT_APP_URL_SERVER + medium[photoIndex].path}
+            mainSrc={medium[photoIndex].base64}
             nextSrc={
-              process.env.REACT_APP_URL_SERVER +
-              medium[(photoIndex + 1) % medium.length].path
+              medium[(photoIndex + 1) % medium.length].base64
             }
             prevSrc={
-              process.env.REACT_APP_URL_SERVER +
-              medium[(photoIndex + medium.length - 1) % medium.length].path
+              medium[(photoIndex + medium.length - 1) % medium.length].base64
             }
             imageTitle={photoIndex + 1 + "/" + medium.length}
             // mainSrcThumbnail={images[photoIndex]}
@@ -675,7 +677,7 @@ const UseHomeItem = (props) => {
             <div className="d-flex subtexts ">
               <span className="title">ชื่อ-นามสกุล :</span>
               <span className="des-text">
-                {_.isEmpty(item.name_surname) ? "" : item.name_surname}
+                {_.isEmpty(item.nameSubname) ? "" : item.nameSubname}
               </span>
             </div>
             <div className="d-flex subtexts">
@@ -697,15 +699,17 @@ const UseHomeItem = (props) => {
               <span className="title">วันที่โอนเงิน :</span>
               <span className="des-text">
                 {/* {moment(item.transfer_date).format("MMM DD, YYYY")} */}
-                {moment.unix(item.transfer_date / 1000).format("MMM DD, YYYY")}
+                {/* {moment.unix(item.dateTranfer / 1000).format("MMM DD, YYYY")} */}
                 {/* {item.transfer_date} */}
+                { moment(item.dateTranfer).format('MMMM Do YYYY') } 
               </span>
             </div>
 
             <div className=" subtexts">
               <span className="title w-100 d-block">รายละเอียด :</span>
               <span className="des-text my-1 d-inline-block">
-                {_.isEmpty(item.detail) ? "" : item.detail}
+                
+                <div dangerouslySetInnerHTML={{__html: _.isEmpty(item.body) ? "" : item.body }} />
               </span>
             </div>
           </div>
@@ -713,7 +717,7 @@ const UseHomeItem = (props) => {
           <div className="card-text -foot d-flex align-items-center py-2 px-2 justify-content-between">
             <p
               className="m-0 tex-follow"
-              onClick={() => {
+              onClick={async() => {
                 // console.log("item :", item, props);
                 // props.history.push({
                 //   pathname: `/follower/${item._id}`,
@@ -721,7 +725,19 @@ const UseHomeItem = (props) => {
                 //   state: { item },
                 // });
 
-                props.onOpenModalFollwers({ is_open: true, item });
+                
+                let soc = await socketIO()
+
+                // soc.emit('follow', (error, message)=>{
+                //   console.log('testing', error, message);
+                // })
+
+                soc.emit('follow', {test: "1234"}, (values)=>{
+                  // console.log(error);
+                  console.log(values);
+                });
+                // console.log("soc :", soc)
+                // props.onOpenModalFollwers({ is_open: true, item });
               }}
             >
               <FontAwesomeIcon icon={faUserPlus} className="mr-1" />

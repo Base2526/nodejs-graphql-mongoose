@@ -7,6 +7,7 @@ import {
     Datagrid,
     DateField,
     EditButton,
+    ShowButton,
     NumberField,
     ReferenceArrayField,
     ReferenceManyField,
@@ -96,14 +97,13 @@ const PostsShow = () => {
                     <Tab label="post.form.comments">
                         <ReferenceManyField
                             reference="comments"
-                            target="id"
-                            sort={{ field: 'created_at', order: 'DESC' }}
-                        >
+                            target="postId"
+                            sort={{ field: 'createdAt', order: 'DESC' }}>
                             <Datagrid>
-                                <DateField source="created_at" />
-                                <TextField source="author.name" />
+                                <DateField source="createdAt" />
                                 <TextField source="body" />
-                                <EditButton />
+                                {/* <TextField source="body" /> */}
+                                <ShowButton />
                             </Datagrid>
                         </ReferenceManyField>
                         {/* <CreateRelatedComment /> */}

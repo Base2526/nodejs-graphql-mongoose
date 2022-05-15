@@ -18,6 +18,15 @@ import {
     useUpdate
   } from "react-admin";
 
+import { makeStyles } from '@material-ui/core/styles';
+
+const useImageFieldStyles = makeStyles(theme => ({
+    image: { // This will override the style of the <img> inside the <div>
+        width: 50,
+        height: 50,
+    }
+}));
+
 const phonesDefaultValue = [
     {
         number: '0988264820',
@@ -28,6 +37,8 @@ const phonesDefaultValue = [
 const ProfileEdit = ({ staticContext, ...props }) => {
     const [saving, setSaving] = useState();
     const { data, isLoading } = useGetOne('users', { id: "62715a96a9a70e05eaed7e42" });
+
+    const imageFieldClasses = useImageFieldStyles();
 
     const handleSave = (ev) => {
         console.log("handleSave : ", data, isLoading);
@@ -41,7 +52,7 @@ const ProfileEdit = ({ staticContext, ...props }) => {
         <SaveContextProvider>
             <SimpleForm record={data} onSubmit={handleSave}>
                 <ImageInput source="avatar" label="Pictures" accept="image/*">
-                    <ImageField source="src" title="title" />
+                    <ImageField classes={imageFieldClasses} source="src" title="title" />
                 </ImageInput>
                 <TextInput source={"displayName"}  validate={required()} />
                 <TextInput source={"email"}  validate={required()} />

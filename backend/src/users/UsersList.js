@@ -17,6 +17,8 @@ import {List, Datagrid, TextField,  TopToolbar,
     DateField 
 } from "react-admin"
 
+import { makeStyles } from '@material-ui/core/styles';
+
 import { useMediaQuery } from '@mui/material';
 import IconEvent from '@mui/icons-material/Event';
 const ListActions = () => {
@@ -39,9 +41,20 @@ const postFilters = [
         <SelectInput optionText="name" />
     </ReferenceInput>,
 ];
+
+
+
+const useImageFieldStyles = makeStyles(theme => ({
+    image: { // This will override the style of the <img> inside the <div>
+        width: 50,
+        height: 50,
+    }
+}));
     
 export const UsersList = () => {
     const isSmall = useMediaQuery(theme => theme.breakpoints.down('sm'));
+
+    const imageFieldClasses = useImageFieldStyles();
   
     return ( <List actions={<ListActions/>} filters={postFilters} >
 
@@ -53,7 +66,7 @@ export const UsersList = () => {
                 />
             ) : (
         <Datagrid rowClick="show" >
-            <ImageField source="image.0.base64" label={'Profile'} />
+            <ImageField classes={imageFieldClasses} source="image.0.base64" label={'Profile'} />
             <TextField source="displayName" label={'Username'} />
             <TextField source="email" label={'Email'} />
 

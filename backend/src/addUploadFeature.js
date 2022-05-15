@@ -11,18 +11,24 @@ const addUploadCapabilities = dataProvider => ({
 
         switch (resource){
             case "users":{
-                if(params.data.image){
-                    let image =    await convertFileToBase64(params.data.image)
-                    console.log(" >>> image : ", image)
-                  
-                    return dataProvider.create(resource, {
-                        ...params,
-                        data: {
-                            ...params.data,
-                            image:[image]
-                        },
-                    })
+                console.log(" >>> resource, params : ", resource, params)
+                if( !_.isEmpty(params.data.image) ){
+                    
+                    if(params.data.image.rawFile){
+                        let image =    await convertFileToBase64(params.data.image)
+                        console.log(" >>> image : ", image)
+                      
+                        return dataProvider.create(resource, {
+                            ...params,
+                            data: {
+                                ...params.data,
+                                image //:[image]
+                            },
+                        })
+                    }
                 }
+
+                return dataProvider.create(resource, params);
                 
             }
         }
@@ -137,6 +143,7 @@ const convertFileToBase64 = file =>
         const reader = new FileReader();
         reader.readAsDataURL(file.rawFile);
 
+        console.log("convertFileToBase64 :", file)
         reader.onload = () => resolve({
             fileName:_.isEmpty(file.fileName) ? (_.isEmpty(file.title) ? file.name: "") : file.fileName,
             base64: reader.result,

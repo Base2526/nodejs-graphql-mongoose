@@ -16,7 +16,8 @@ import {
     ReferenceInput,
     RadioButtonGroupInput,
     SelectInput,
-    DateInput
+    DateInput,
+    FileField
 } from "react-admin"
 
 import { RichTextInput } from 'ra-input-rich-text';
@@ -57,8 +58,13 @@ const PostsEdit = props => (
      
                 <RichTextInput label="Body" source="body" helperText={"helperText"} />
     
-                <FileInput source="files" label="Files & VDO" multiple={true} maxSize={5000000} helperText={"helperText"}>
-                    <ImageField source="base64" title="title" />
+                <FileInput source="files" accept="image/png, image/jpg, image/jpeg" label="Files" multiple={true} maxSize={5000000} helperText={"helperText"}>
+                    <ImageField sx={{ /*width: "30px", color: 'success.main',*/
+                    '& .RaImageField-image':{
+                        width: "100px",
+                    } }} 
+                                source="base64" title="title" />
+                    {/* <FileField source="base64" title="fileName" /> */}
                 </FileInput> 
                 
                 <ReferenceArrayInput  source="follows" reference="users" >
